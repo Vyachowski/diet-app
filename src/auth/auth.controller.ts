@@ -18,6 +18,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Response } from 'express';
 import { UserService } from 'src/user/user.service';
 import { ResetPasswordDTO } from './dto/reset-password.dto';
+import { EmailService } from 'src/email/email.service';
 
 @Controller()
 export class AuthPageController {
@@ -53,7 +54,7 @@ export class AuthPageController {
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService, private userService: UserService, private emailService: UserService) {}
+  constructor(private readonly authService: AuthService, private userService: UserService, private emailService: EmailService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get('/me')
@@ -158,9 +159,11 @@ export class AuthController {
       }
 
       const newPassword = password.randomPassword();
-      // Отправить письмо с новым паролем на почту
-      
-      // Записать новый пароль юзеру
+
+      this.emailService.sendEmail(user.email, 'New password created', `Your new password is: ${newPassword}`);
+      this.userService.changePassword(user._id, newPassword);
+
+      req.flash('success', "New password was sent to your email box.");
 
       return res.redirect('/login');
     } catch(e) {

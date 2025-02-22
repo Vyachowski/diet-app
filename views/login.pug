@@ -9,6 +9,13 @@ block content
             strong.me-auto Login process went wrong
             button(type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close")
           .toast-body.text-danger=error
+    if success
+      .toast-wrapper(style="position: absolute; top: 60px; right: 20px;")
+        .toast.toast-success.fade.show(role="alert" aria-live="assertive" aria-atomic="true")
+          .toast-header
+            strong.me-auto Successfull completed!
+            button(type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close")
+          .toast-body.text-success=error
     h1.visually-hidden Login page
     .container
       .row.justify-content-center

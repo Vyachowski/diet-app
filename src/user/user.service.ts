@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { DataSource } from 'typeorm';
+import { DataSource, ObjectId } from 'typeorm';
 import { User } from './entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { Environment } from 'src/shared/types';
@@ -88,8 +88,7 @@ export class UserService implements OnModuleInit {
     return menu;
   }
 
-  // TODO: Add user password updating
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
+  async changePassword(_id: ObjectId, newPassword) {
+      return await this.dataSource.mongoManager.update(User, { _id }, { password: newPassword });
+  }
 }
