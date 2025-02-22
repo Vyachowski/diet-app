@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { Meal, Recipe } from 'src/common/types';
+import { Meal, Recipe } from 'src/shared/types';
 import { Column, CreateDateColumn, Entity, ObjectIdColumn } from 'typeorm';
 
 @Entity('menus')

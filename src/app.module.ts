@@ -7,8 +7,8 @@ import { MenuModule } from './menu/menu.module';
 import { Menu } from './menu/entities/menu.entity';
 import { MenuService } from './menu/menu.service';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { User } from './users/entities/user.entity';
+import { UsersModule } from './user/user.module';
+import { User } from './user/entities/user.entity';
 
 @Module({
   imports: [

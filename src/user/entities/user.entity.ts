@@ -1,13 +1,14 @@
 import { ObjectId } from 'mongodb';
-import { Column, CreateDateColumn, Entity, ObjectIdColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, ObjectIdColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
   @ObjectIdColumn()
   _id: ObjectId;
 
+  @Index({ unique: true })
   @Column()
-  username: string;
+  email: string;
 
   @Column()
   password: string;

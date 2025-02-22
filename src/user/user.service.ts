@@ -1,14 +1,15 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { DataSource } from 'typeorm';
+import { DataSource, ObjectId } from 'typeorm';
 import { User } from './entities/user.entity';
 import { ConfigService } from '@nestjs/config';
-import { Environment } from 'src/common/types';
+import { Environment } from 'src/shared/types';
 import { MenuService } from 'src/menu/menu.service';
 import * as bcrypt from 'bcrypt';
+import { CONSTANTS } from 'src/shared';
 
 @Injectable()
-export class UsersService implements OnModuleInit {
+export class UserService implements OnModuleInit {
   constructor(
     private dataSource: DataSource,
     private configService: ConfigService,
@@ -17,13 +18,13 @@ export class UsersService implements OnModuleInit {
 
   async onModuleInit() {
     const env = this.configService.get('ENV');
-    const testUsername = this.configService.get('TEST_USERNAME');
+    const testEmail = this.configService.get('TEST_EMAIL');
 
     if (env.toLowerCase() === Environment.Development) {
       const existingTestUser = await this.dataSource.mongoManager.findOneBy(
         User,
         {
-          username: testUsername,
+          email: testEmail,
         },
       );
 
@@ -32,12 +33,11 @@ export class UsersService implements OnModuleInit {
         return;
       }
 
-      const saltOrRounds = 10;
       const password = this.configService.get('TEST_PASSWORD');
-      const hash = await bcrypt.hash(password, saltOrRounds);
+      const hash = await bcrypt.hash(password, CONSTANTS.PASSWORD_SALT_ROUNDS_AMOUNT);
 
       const testUser: CreateUserDto = {
-        username: testUsername,
+        email: testEmail,
         password: hash,
       };
 
@@ -71,8 +71,8 @@ export class UsersService implements OnModuleInit {
     return await this.dataSource.mongoManager.findOneBy(User, id);
   }
 
-  async findOneByUsername(username: string) {
-    return await this.dataSource.mongoManager.findOneBy(User, { username });
+  async findOneByEmail(email: string) {
+    return await this.dataSource.mongoManager.findOneBy(User, { email });
   }
 
   async getUserMenu(id: number) {
@@ -88,12 +88,7 @@ export class UsersService implements OnModuleInit {
     return menu;
   }
 
-  // TODO: Add user password updating
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // deactivate(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+  async changePassword(_id: ObjectId, newPassword) {
+      return await this.dataSource.mongoManager.update(User, { _id }, { password: newPassword });
+  }
 }

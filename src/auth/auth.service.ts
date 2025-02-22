@@ -1,34 +1,31 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/entities/user.entity';
+import { UserService } from 'src/user/user.service';
+import { User } from 'src/user/entities/user.entity';
+import { CONSTANTS } from 'src/shared';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private userService: UserService,
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(
-    username: string,
-    pass: string,
-  ): Promise<Omit<User, 'password'> | null> {
-    const user = await this.usersService.findOneByUsername(username);
-    const isPasswordMatch = await bcrypt.compare(pass, user.password);
+  async validateUser(email: string, pass: string): Promise<User | null> {
+    try {
+      const user = await this.userService.findOneByEmail(email);
+      const isPasswordMatch = await bcrypt.compare(pass, user?.password);
 
-    if (user && isPasswordMatch) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      return result;
+      return user && isPasswordMatch ? user : null;
+    } catch (e) {
+      console.error(e?.message);
+      return null;
     }
-
-    return null;
   }
 
-  async login(user: Omit<User, 'password'>) {
-    const payload = { username: user.username, sub: user._id.toString() };
+  async login(user: User) {
+    const payload = { email: user.email, sub: user._id.toString() };
 
     return {
       accessToken: this.jwtService.sign(payload, { expiresIn: '15m' }),
@@ -38,20 +35,20 @@ export class AuthService {
     };
   }
 
-  async signUp(username: string, password: string) {
-    const existingUser = await this.usersService.findOneByUsername(username);
+  async signUp(email: string, password: string) {
+    const existingUser = await this.userService.findOneByEmail(email);
 
     if (existingUser) {
-      throw new ConflictException('Username already exists');
+      throw new ConflictException('Email already registered.');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await this.usersService.create({
-      username,
+    const hashedPassword = await bcrypt.hash(password, CONSTANTS.PASSWORD_SALT_ROUNDS_AMOUNT);
+    const newUser = await this.userService.create({
+      email,
       password: hashedPassword,
     });
 
-    const payload = { username: newUser.username, sub: newUser._id.toString() };
+    const payload = { username: newUser.email, sub: newUser._id.toString() };
 
     return {
       accessToken: this.jwtService.sign(payload, { expiresIn: '15m' }),
@@ -61,4 +58,32 @@ export class AuthService {
       user: newUser,
     };
   }
+
+  verifyJwtToken(token: string) {
+    try {
+      return this.jwtService.verify(token);
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }
+
+  async refreshToken(oldRefreshToken: string) {
+    const payload = await this.verifyJwtToken(oldRefreshToken);
+
+    if (!payload) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const user = await this.userService.findOne(payload.userId);
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const accessToken =  this.jwtService.sign(payload, { expiresIn: '15m' });
+    const newRefreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+
+    return { accessToken, newRefreshToken };
+  }  
 }

@@ -3,8 +3,8 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
-  @ApiProperty({ description: 'User nickname', required: true })
-  username: string;
+  @ApiProperty({ description: 'User email', required: true })
+  email: string;
 
   @IsNotEmpty()
   @ApiProperty({ description: 'User password', required: true })

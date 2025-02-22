@@ -1,13 +1,6 @@
-extends layout 
+extends layout
 
 block content
-  //- if flash('error')
-  //-   .toast.toast-error.fade.show(role="alert" aria-live="assertive" aria-atomic="true")
-  //-     .toast-header
-  //-       strong.me-auto Error
-  //-       button(type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close")
-  //-     .toast-body
-  //-       | #{flash('error')}
   main.p-5
     h1.visually-hidden Registration page
     .container
@@ -17,8 +10,8 @@ block content
             h2.text-center Registration form
             form(action="/api/auth/sign-up" method="POST")
               div.mb-3
-                label.form-label(for="login") Username
-                input#email.form-control(type="text" name="username" placeholder="Tester" required)
+                label.form-label(for="email") Email
+                input#email.form-control(type="email" name="email" placeholder="email@domain.com" required)
               div.mb-3
                 label.form-label(for="password") Password
                 input#password.form-control(type="password" name="password" placeholder='sTr0nGP/\\$$worD' required)
@@ -27,4 +20,4 @@ block content
                 input#passwordConfirmation.form-control(type="password" name="passwordConfirmation" placeholder='sTr0nGP/\\$$worD' required)
               div.d-grid.gap-2
                 button.btn.btn-primary(type='submit') Register
-              
+                p.text-center Already have an account? <a href='/login'>Sign in</a>

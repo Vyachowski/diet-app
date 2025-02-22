@@ -1,0 +1,3 @@
+export const CONSTANTS = {
+    PASSWORD_SALT_ROUNDS_AMOUNT: 10,
+};

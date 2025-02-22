@@ -1,9 +1,13 @@
+install:
+	npm ci
 start:
 	npm run start
 dev:
-	nest start --watch
-lint:
+	npm run start:dev
+
+format:
 	npm run lint
+
 resource:
 	nest g resource $(name)
 res:

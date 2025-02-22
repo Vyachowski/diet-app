@@ -6,14 +6,13 @@ import {
   Response,
   UseGuards,
 } from '@nestjs/common';
-import { AppService } from './app.service';
-import { groceryList } from './common/basic-menu';
+import { MenuList } from './shared/data';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { UsersService } from './users/users.service';
+import { UserService } from './user/user.service';
 
 @Controller()
 export class AppController {
-  constructor(private userService: UsersService) {}
+  constructor(private userService: UserService) {}
   @Get()
   @UseGuards(JwtAuthGuard)
   @Render('index')
@@ -23,9 +22,10 @@ export class AppController {
     }
 
     const menu = await this.userService.getUserMenu(req.user.id);
+    const { groceryList } = MenuList.at(0);
 
     return {
-      username: req.user.username,
+      email: req.user.email,
       menu: menu,
       groceryList,
     };
