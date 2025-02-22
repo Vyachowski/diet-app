@@ -28,5 +28,20 @@ html(lang="en")
                   | Sign in
                 a.btn.btn-primary(href="/sign-up")
                   | Sign Up
+    .main-wrapper 
+    if error
+      .toast-wrapper(style="position: absolute; top: 60px; right: 20px;")
+        .toast.toast-error.fade.show(role="alert" aria-live="assertive" aria-atomic="true")
+          .toast-header
+            strong.me-auto Warning!
+            button(type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close")
+          .toast-body.text-danger=error
+    if success
+      .toast-wrapper(style="position: absolute; top: 60px; right: 20px;")
+        .toast.toast-success.fade.show(role="alert" aria-live="assertive" aria-atomic="true")
+          .toast-header
+            strong.me-auto Successfully completed!
+            button(type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close")
+          .toast-body.text-success=success
     block content
     footer

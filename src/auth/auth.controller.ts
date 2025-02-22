@@ -29,6 +29,7 @@ export class AuthPageController {
   renderLoginPage(@Req() req) {
     return {
       error: req.flash('error')[0] || '',
+      success: req.flash('success')[0] || '',
       email: req.flash('email')[0] || '',
       password: req.flash('password')[0] || '',
     };
@@ -134,7 +135,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('/logout')
-  async logout(@Req() req, @Res() res) {
+  async logout(@Res() res) {
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
 
