@@ -1,4 +1,5 @@
 import ms from 'ms';
+import password from 'secure-random-password';
 import {
   Controller,
   Get,
@@ -143,21 +144,30 @@ export class AuthController {
   }
 
   @Post('/reset-password')
-  resetPassword(@Body() resetPasswordDto: ResetPasswordDTO, @Req() req, @Res() res) {
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDTO, @Req() req, @Res() res) {
     const { email } = resetPasswordDto;
   
     try {
-      const user = this.userService.findOneByEmail(email);
-
+      const user = await this.userService.findOneByEmail(email);
       
+      if (!user) {
+        req.flash('error', "User with this email doesn't exist");
+        req.flash('email', req.body.email);
+
+        return res.redirect('/reset-password');
+      }
+
+      const newPassword = password.randomPassword();
+      // Отправить письмо с новым паролем на почту
+      
+      // Записать новый пароль юзеру
+
+      return res.redirect('/login');
     } catch(e) {
-      req.flash('error', 'There is no user with this email.');
+      req.flash('error', 'Something went wrong. Please, try again');
       req.flash('email', req.body.email);
 
       return res.redirect('/reset-password');
     }
-    
-    // Отправить письмо с новым паролем на почту
-    // Редирект на страницу логина
   }
 }

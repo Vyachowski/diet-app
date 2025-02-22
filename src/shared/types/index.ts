@@ -19,3 +19,7 @@ export interface Recipe {
   instruction: string;
   image?: string;
 }
+
+export type Menu = Record<Meal, Recipe>;
+export type GroceryList = { name: string, amountInGramms: number }[];
+export type MenuList = { menu: Menu, groceryList: GroceryList }[];

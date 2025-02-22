@@ -3,9 +3,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { DataSource } from 'typeorm';
 import { User } from './entities/user.entity';
 import { ConfigService } from '@nestjs/config';
-import { Environment } from 'src/common/types';
+import { Environment } from 'src/shared/types';
 import { MenuService } from 'src/menu/menu.service';
 import * as bcrypt from 'bcrypt';
+import { CONSTANTS } from 'src/shared';
 
 @Injectable()
 export class UserService implements OnModuleInit {
@@ -32,9 +33,8 @@ export class UserService implements OnModuleInit {
         return;
       }
 
-      const saltOrRounds = 10;
       const password = this.configService.get('TEST_PASSWORD');
-      const hash = await bcrypt.hash(password, saltOrRounds);
+      const hash = await bcrypt.hash(password, CONSTANTS.PASSWORD_SALT_ROUNDS_AMOUNT);
 
       const testUser: CreateUserDto = {
         email: testEmail,

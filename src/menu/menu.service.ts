@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DataSource, ObjectId } from 'typeorm';
 import { Menu } from './entities/menu.entity';
-import basicMenu from 'src/common/basic-menu';
+import { MenuList } from 'src/shared/data';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 
@@ -20,7 +20,7 @@ export class MenuService implements OnModuleInit {
           'Menu collection exists but is empty, data will be created.',
         );
 
-        const newMenu = this.dataSource.mongoManager.create(Menu, basicMenu);
+        const newMenu = this.dataSource.mongoManager.create(Menu, MenuList.at(0).menu);
         const result = await this.dataSource.manager.save(newMenu);
 
         console.log('Data was created:', result);
@@ -28,7 +28,7 @@ export class MenuService implements OnModuleInit {
     } catch {
       console.error('Error checking menu collection, data will be created.');
 
-      const newMenu = this.dataSource.mongoManager.create(Menu, basicMenu);
+      const newMenu = this.dataSource.mongoManager.create(Menu, MenuList.at(0).menu);
       const result = await this.dataSource.manager.save(newMenu);
 
       console.log('Data was created:', result);
