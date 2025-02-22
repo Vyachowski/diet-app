@@ -8,7 +8,7 @@ import { MenuService } from 'src/menu/menu.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class UsersService implements OnModuleInit {
+export class UserService implements OnModuleInit {
   constructor(
     private dataSource: DataSource,
     private configService: ConfigService,
@@ -91,9 +91,5 @@ export class UsersService implements OnModuleInit {
   // TODO: Add user password updating
   // update(id: number, updateUserDto: UpdateUserDto) {
   //   return `This action updates a #${id} user`;
-  // }
-
-  // deactivate(id: number) {
-  //   return `This action removes a #${id} user`;
   // }
 }

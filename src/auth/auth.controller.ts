@@ -15,7 +15,8 @@ import { RegisterDto } from './dto/register.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Response } from 'express';
-import { UsersService } from 'src/users/users.service';
+import { UserService } from 'src/user/user.service';
+import { ResetPasswordDTO } from './dto/reset-password.dto';
 
 @Controller()
 export class AuthPageController {
@@ -51,7 +52,7 @@ export class AuthPageController {
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService, private userService: UsersService) {}
+  constructor(private readonly authService: AuthService, private userService: UserService, private emailService: UserService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get('/me')
@@ -67,12 +68,13 @@ export class AuthController {
   ) {
     const { email, password, passwordConfirmation } = registerDto;
     const existingUser = await this.userService.findOneByEmail(email);
+    const isPasswordInvalid = password !== passwordConfirmation;
 
-
-    if (password !== passwordConfirmation) {
+    if (isPasswordInvalid) {
       req.flash('error', 'Password and password confirmation are not equal.');
       req.flash('email', req.body.email);
       req.flash('password', req.body.password);
+
       return res.redirect('/sign-up');
     }
 
@@ -80,6 +82,7 @@ export class AuthController {
       req.flash('error', 'The user already exists.');
       req.flash('email', req.body.email);
       req.flash('password', req.body.password);
+
       return res.redirect('/sign-up');
     }
 
@@ -139,13 +142,22 @@ export class AuthController {
     return 'refreshed!';
   }
 
-  // @Post('/password-reset')
-  // resetPassword() {
-  //   return 'refreshed!';
-  // }
+  @Post('/reset-password')
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDTO, @Req() req, @Res() res) {
+    const { email } = resetPasswordDto;
+  
+    try {
+      const user = this.userService.findOneByEmail(email);
 
-  // @Put('/password')
-  // updatePassword() {
-  //   return 'refreshed!';
-  // }
+      
+    } catch(e) {
+      req.flash('error', 'There is no user with this email.');
+      req.flash('email', req.body.email);
+
+      return res.redirect('/reset-password');
+    }
+    
+    // Отправить письмо с новым паролем на почту
+    // Редирект на страницу логина
+  }
 }

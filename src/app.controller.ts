@@ -8,11 +8,11 @@ import {
 } from '@nestjs/common';
 import { groceryList } from './common/basic-menu';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { UsersService } from './users/users.service';
+import { UserService } from './user/user.service';
 
 @Controller()
 export class AppController {
-  constructor(private userService: UsersService) {}
+  constructor(private userService: UserService) {}
   @Get()
   @UseGuards(JwtAuthGuard)
   @Render('index')
