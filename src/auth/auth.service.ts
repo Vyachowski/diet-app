@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
@@ -8,13 +8,13 @@ import { CONSTANTS } from 'src/shared';
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UserService,
+    private userService: UserService,
     private jwtService: JwtService,
   ) {}
 
   async validateUser(email: string, pass: string): Promise<User | null> {
     try {
-      const user = await this.usersService.findOneByEmail(email);
+      const user = await this.userService.findOneByEmail(email);
       const isPasswordMatch = await bcrypt.compare(pass, user?.password);
 
       return user && isPasswordMatch ? user : null;
@@ -36,14 +36,14 @@ export class AuthService {
   }
 
   async signUp(email: string, password: string) {
-    const existingUser = await this.usersService.findOneByEmail(email);
+    const existingUser = await this.userService.findOneByEmail(email);
 
     if (existingUser) {
       throw new ConflictException('Email already registered.');
     }
 
     const hashedPassword = await bcrypt.hash(password, CONSTANTS.PASSWORD_SALT_ROUNDS_AMOUNT);
-    const newUser = await this.usersService.create({
+    const newUser = await this.userService.create({
       email,
       password: hashedPassword,
     });
@@ -68,4 +68,23 @@ export class AuthService {
       return null;
     }
   }
+
+  async refreshToken(oldRefreshToken: string) {
+    const payload = await this.verifyJwtToken(oldRefreshToken);
+
+    if (!payload) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const user = await this.userService.findOne(payload.userId);
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const accessToken =  this.jwtService.sign(user, { expiresIn: '15m' });
+    const newRefreshToken = this.jwtService.sign(user, { expiresIn: '15m' });
+
+    return { accessToken, newRefreshToken };
+  }  
 }

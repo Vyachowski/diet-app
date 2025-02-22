@@ -10,6 +10,7 @@ import {
   UseGuards,
   Res,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
@@ -143,9 +144,31 @@ export class AuthController {
   }
 
   @Post('/refresh-token')
-  refreshToken() {
-    return 'refreshed!';
+  async refreshToken(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies['refresh_token'];
+  
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is missing');
+    }
+  
+    try {
+      const { accessToken, newRefreshToken } = await this.authService.refreshToken(refreshToken);
+  
+      res.cookie('access_token', accessToken, {
+        httpOnly: true,
+        maxAge: ms('15 minutes'),
+      });
+      res.cookie('refresh_token', newRefreshToken, {
+        httpOnly: true,
+        maxAge: ms('7 days'),
+      });
+  
+      return { accessToken };
+    } catch (e) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
   }
+  
 
   @Post('/reset-password')
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDTO, @Req() req, @Res() res) {
