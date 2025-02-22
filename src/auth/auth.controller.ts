@@ -1,5 +1,6 @@
 import ms from 'ms';
 import password from 'secure-random-password';
+import * as bcrypt from 'bcrypt';
 import {
   Controller,
   Get,
@@ -19,6 +20,7 @@ import { Response } from 'express';
 import { UserService } from 'src/user/user.service';
 import { ResetPasswordDTO } from './dto/reset-password.dto';
 import { EmailService } from 'src/email/email.service';
+import { CONSTANTS } from 'src/shared';
 
 @Controller()
 export class AuthPageController {
@@ -159,9 +161,10 @@ export class AuthController {
       }
 
       const newPassword = password.randomPassword();
+      const newHashedPassword = await bcrypt.hash(newPassword, CONSTANTS.PASSWORD_SALT_ROUNDS_AMOUNT);
 
       this.emailService.sendEmail(user.email, 'New password created', `Your new password is: ${newPassword}`);
-      this.userService.changePassword(user._id, newPassword);
+      this.userService.changePassword(user._id, newHashedPassword);
 
       req.flash('success', "New password was sent to your email box.");
 

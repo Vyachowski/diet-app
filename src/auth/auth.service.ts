@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
+import { CONSTANTS } from 'src/shared';
 
 @Injectable()
 export class AuthService {
@@ -41,7 +42,7 @@ export class AuthService {
       throw new ConflictException('Email already registered.');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, CONSTANTS.PASSWORD_SALT_ROUNDS_AMOUNT);
     const newUser = await this.usersService.create({
       email,
       password: hashedPassword,
