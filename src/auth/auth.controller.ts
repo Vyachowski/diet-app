@@ -38,6 +38,15 @@ export class AuthPageController {
       password: req.flash('password')[0] || '',
     };
   }
+
+  @Get('/reset-password')
+  @Render('reset-password')
+  renderRestorePasswordPage(@Req() req) {
+    return {
+      error: req.flash('error')[0] || '',
+      email: req.flash('email')[0] || '',
+    };
+  }
 }
 
 @Controller('api/auth')
