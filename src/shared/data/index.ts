@@ -27,7 +27,7 @@ const MenuList: MenuList = [
         instruction: 'Serve cottage cheese topped with chopped walnuts.',
         calories: 310,
         image:
-          'https://www.hsnstore.eu/blog/wp-content/uploads/sites/5/2020/02/cottage-cheese-honey-wanuts-768x384.jpg',
+          'https://img.taste.com.au/a2jpSFbM/w720-h480-cfill-q80/taste/2016/11/cottage-cheese-and-walnut-fritters-with-roasted-cherry-truss-tomatoes-50749-1.jpeg',
       },
       [Meal.Lunch]: {
         name: 'Grilled Chicken with Quinoa and Vegetables',
@@ -42,7 +42,7 @@ const MenuList: MenuList = [
           'Grill chicken breast. Cook quinoa according to package instructions. Steam broccoli and carrots.',
         calories: 452,
         image:
-          'https://www.completelydelicious.com/wp-content/uploads/2023/05/grilled-chicken-quinoa-salad-5-768x1024.jpg',
+          'https://cdn.shopify.com/s/files/1/0436/2675/8299/files/Grown_Strong_Grilled_Chicken_With_Quinoa_Roasted_Vegetables_1024x1024.jpg?v=1674870260',
       },
       [Meal.Snack]: {
         name: 'Greek Yogurt with Berries and Nuts',

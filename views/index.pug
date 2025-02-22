@@ -6,20 +6,30 @@ block content
       div(class="p-3 text-center")
         h1(class="mb-4 display-4 fw-bold") Hello, healthy world!
       h2(class="mb-4 h2 fw-bold") Menu
-      each val, key in menu
-        .col-md-6.col-lg-4
-          .card.shadow-sm
-            a(href=val.image)
-              img.card-img-top(src=val.image alt="Meal image")
-            .card-body
-              h5.card-title= val.name
-              p.card-text= val.instruction
-              a.btn.btn-primary(href="#") Calories: #{val.calories}
+      .container.mb-5
+        .row.d-flex.g-5
+          each val, key in menu
+            .col-md-6.col-lg-4
+              h3=key
+              .card.shadow-sm.h-100
+                a.d-block(href=val.image)
+                  img.card-img-top.d-block(src=val.image alt="Meal image" style="max-height: 200px; object-fit: cover")
+                .card-body.d-flex.flex-column
+                  h5.card-title= val.name
+                  p.card-text.flex-grow-1= val.instruction
+                  a.btn.btn-primary.mt-auto(href="#") Calories: #{val.calories}
     section(class="p-2 pt-4 row g-3")
-      h2(class="mb-4 h2 fw-bold col-12") Grocery list
-      ul.list-group.col-12.col-md-6
-        each item in groceryList
-          li.list-group-item.d-flex.align-items-center
-            svg.me-2.text-success(width="16" height="16" fill="currentColor" viewBox="0 0 16 16")
-              path(d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z")
-            | Buy #{item.amountInGramms} gramms of #{item.name}
+      h2(class="mb-4 h2 fw-bold col-12 text-center") Grocery list
+      .col-12
+        .row
+          each item in groceryList
+            .col-12.col-md-6.col-lg-4
+              li.list-group-item.d-flex.justify-content-between.align-items-center.px-3.py-2.shadow-sm.rounded
+                .d-flex.align-items-center
+                  span.me-2.text-success
+                    svg(width="18" height="18" viewBox="0 0 24 24" fill="currentColor")
+                      path(d="M6 6H5V4C5 2.9 5.9 2 7 2H17C18.1 2 19 2.9 19 4V6H18V4H6V6ZM4 6V8H20V6H4ZM3 10V20C3 21.1 3.9 22 5 22H19C20.1 22 21 21.1 21 20V10H3ZM14 14H16V18H14V14ZM8 14H10V18H8V14Z")
+                  span= item.name
+                span.badge.bg-primary.rounded-pill #{item.amountInGramms}g
+
+

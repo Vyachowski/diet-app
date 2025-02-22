@@ -61,8 +61,7 @@ export class AuthService {
 
   verifyJwtToken(token: string) {
     try {
-      const decoded = this.jwtService.verify(token);
-      return decoded;
+      return this.jwtService.verify(token);
     } catch (e) {
       console.error(e);
       return null;
@@ -82,8 +81,8 @@ export class AuthService {
       throw new UnauthorizedException('User not found');
     }
 
-    const accessToken =  this.jwtService.sign(user, { expiresIn: '15m' });
-    const newRefreshToken = this.jwtService.sign(user, { expiresIn: '15m' });
+    const accessToken =  this.jwtService.sign(payload, { expiresIn: '15m' });
+    const newRefreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
     return { accessToken, newRefreshToken };
   }  
